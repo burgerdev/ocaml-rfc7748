@@ -1,0 +1,13 @@
+(jbuild_version 1)
+
+(library
+ ((name ed)
+  (public_name ed)
+
+  (libraries (
+              zarith
+             )
+
+  )
+ )
+)
