@@ -17,10 +17,9 @@ end
 module type Infix = sig
   type t
   val ( + ): t -> t -> t
+  val ( - ): t -> t -> t
   val ( * ): t -> t -> t
-  (* TODO: enable if useful and default implementation makes sense *)
-  (* val ( - ): t -> t -> t *)
-  (* val ( / ): t -> t -> t *)
+  val ( / ): t -> t -> t
   val ( = ): t -> t -> bool
   val ( != ): t -> t -> bool
 end
@@ -50,19 +49,27 @@ end
 *)
 module type Field = sig
   include Raw_field
-  module Infix: Infix with type t = t
+  module Infix: Infix with type t := t
 end
 
 module Infix(F: Raw_field): Infix with type t = F.t = struct
   include F
   let ( + ) = add
+  let ( - ) m s = m + neg s
   let ( * ) = mul
+  let ( / ) n d = n * inv d
   let ( = ) = eq
   let ( != ) x y = not (eq x y)
 end
 
 (** A generic mod-p field backed by [Z] (Zarith). *)
-module Zp(S: sig val p: Z.t end): Field with type t = Z.t = struct
+module Zp(S: sig val p: Z.t end): sig
+  include Field
+
+  val of_Z: Z.t -> t
+  val to_Z: t -> Z.t
+  val pp: Format.formatter -> t -> unit
+end = struct
 
   module A = struct
     type t = Z.t
@@ -87,5 +94,11 @@ module Zp(S: sig val p: Z.t end): Field with type t = Z.t = struct
 
   include A
 
-  module Infix = Infix(A)
+  let of_Z x = Z.(rem x S.p)
+
+  let to_Z x = x
+
+  let pp = Z.pp_print
+
+  module Infix: Infix with type t := t = Infix(A)
 end
