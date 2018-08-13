@@ -30,19 +30,8 @@ let test_base_point _ =
   let order = Z.(pow ~$2 252 + of_string "27742317777372353535851937790883648493") in
   "base point has advertised order" @? C.I.(Infix.(scale order base_point = zero))
 
-let test_montgomery_conversions =
-  range 15
-  |> List.rev
-  (* |> List.map ((+) (256*256)) *)
-  |> List.map Z.of_int
-  |> List.map @@ fun u ->
-  Format.asprintf "u = %a" Z.pp_print u >:: fun () ->
-    let u' = C.of_montgomery_u u |> C.to_montgomery_u in
-    assert_equal_Z u u'
-
 let suite =
   "Curve_25519_suite" >::: [ "base_point_test" >:: test_base_point
-                           ; "montgomery_conversion_test" >::: test_montgomery_conversions
                            ]
 
 let _ =
