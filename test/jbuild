@@ -1,7 +1,7 @@
 (jbuild_version 1)
 
 (executables
- ((names (test_field_25519 test_curve_25519))
+ ((names (test_field_25519 test_curve_25519 test_x25519))
   (libraries (ed oUnit fmt))))
 
 (alias
@@ -17,6 +17,12 @@
 )
 
 (alias
+ ((name x25519)
+  (deps    (test_x25519.exe))
+  (action (run ${<})))
+)
+
+(alias
  ((name    runtest)
-  (deps    ((alias field_25519) (alias curve_25519))))
+  (deps    ((alias field_25519) (alias curve_25519) (alias x25519))))
 )

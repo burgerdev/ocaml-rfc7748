@@ -23,6 +23,8 @@ module Field_25519 = struct
      https://en.wikipedia.org/wiki/Quadratic_residue#Prime_or_prime_power_modulus
 
      The result is only valid if [n] is a quadratic residue.
+
+     TODO: it might be less costly to follow RFC 8032, 5.1.1, and "square and compare" the candidate root
   *)
   let sqrt n =
     let sqrt_n =
@@ -73,24 +75,6 @@ module Curve_25519 = struct
   module I = Edwards.Twisted_edwards(Field_25519)(struct let a = Params_25519.c let d = Params_25519.d end)
 
   type point = I.point
-
-  (* let of_montgomery: Z.t * Z.t -> point =
-     fun p ->
-      let p = match p with
-        | (u, v) when Z.(v = zero) ->
-          (Field_25519.zero, Field_25519.one)
-        | (u, v) ->
-          let open Field_25519 in
-          let open Infix in
-          let u = of_Z u in
-          let v = of_Z v in
-          (u * Params_25519.conversion_factor / v, (u - one) / (u + one))
-      in
-      match I.of_pair p with
-      | Some x -> x
-      | None ->
-        let (u, v) = p in
-        failwith @@ Format.asprintf "not a point on the twisted Edwards curve: (%a, %a)" Field_25519.pp u Field_25519.pp v *)
 
   let of_montgomery_u: Z.t -> point = fun u ->
     let open Field_25519 in
