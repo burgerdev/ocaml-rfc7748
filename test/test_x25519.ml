@@ -1,5 +1,4 @@
 open OUnit
-open Fmt
 
 open Ed.X25519
 

@@ -1,5 +1,4 @@
 open OUnit
-open Fmt
 
 module F = Ed.Curve_25519.Field_25519
 module C = Ed.Curve_25519.Curve_25519
@@ -12,7 +11,7 @@ let rec range = function
 
 let assert_equal_Z x y =
   let msg = Fmt.strf "%a != %a" Z.pp_print x Z.pp_print y in
-  msg @? Z.(x = y)
+  msg @? (x = y)
 
 let assert_equal_F x y =
   let msg = Fmt.strf "%a != %a" F.pp x F.pp y in
