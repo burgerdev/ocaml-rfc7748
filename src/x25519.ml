@@ -35,6 +35,10 @@ module Wire = struct
 
   let cstruct_of_hex = Cstruct.of_hex
 
+(* Quoth the RFC:
+set the three least significant bits of the first byte and the most significant bit
+of the last to zero, set the second most significant bit of the last byte to 1
+*)
   let sanitize_scalar =
     let unset_this = Z.logor Z.(~$7) (Z.shift_left Z.(~$128) (8*31)) in
     let set_that = Z.shift_left Z.(~$64) (8*31) in
