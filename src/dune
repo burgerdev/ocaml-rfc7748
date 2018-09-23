@@ -1,0 +1,6 @@
+(library
+ (name ed)
+ (public_name ed)
+
+ (libraries cstruct zarith)
+)

@@ -1,0 +1,4 @@
+(test 
+  (name test_x25519)
+  (libraries ed ounit fmt)
+)
