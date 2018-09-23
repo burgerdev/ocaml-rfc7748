@@ -34,6 +34,7 @@ module X25519: sig
   val pub_of_string: string -> pub
   val string_of_pub: pub -> string
   val priv_of_string: string -> priv
+  val string_of_priv: priv -> string
 
   val x25519: priv -> pub -> pub
 
@@ -58,6 +59,11 @@ end = struct
             |> Wire.z_of_cstruct
             |> Wire.sanitize_scalar
     in Private_key z
+
+  let string_of_priv: priv -> string = function Private_key pk ->
+    pk
+    |> Wire.cstruct_of_z 32
+    |> Wire.hex_of_cstruct
 
 
 
