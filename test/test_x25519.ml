@@ -68,7 +68,7 @@ let x448_rep =
   ; { start="0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     ; iter=1000
     ; exp="aa3b4749d55b9daf1e5b00288826c467274ce3ebbdd5c17b975e09d4af6c67cf10d087202db88286e2b79fceea3ec353ef54faa26e219f38"}]
-  |> List.map @@ black_box_test (module X25519)
+  |> List.map @@ black_box_test (module X448)
   |> List.map @@ fun f -> "repeated" >:: f
 
 let _ =
