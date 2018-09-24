@@ -39,12 +39,6 @@ module type Edwards = sig
   val constant_time_conditional_swap: integral -> element -> element -> element * element
 end
 
-module type S = sig
-  type integral
-  type element
-
-  val scale: integral -> element -> element
+module Make: functor (F: Field)(I: Integral)(E: Edwards with type integral = I.t and type element = F.t) -> sig
+  val scale: I.t -> F.t -> F.t
 end
-
-module Make: functor (F: Field)(I: Integral)(E: Edwards with type integral = I.t and type element = F.t) ->
-  S with type integral = I.t and type element = F.t

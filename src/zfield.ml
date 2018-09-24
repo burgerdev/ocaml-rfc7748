@@ -1,5 +1,5 @@
 
-module Zp(P: sig val p: Z.t end): Group.Field with type t = Z.t = struct
+module Zp(P: sig val p: Z.t end): Curve.Field with type t = Z.t = struct
   type t = Z.t
 
   include P

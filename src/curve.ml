@@ -39,18 +39,7 @@ module type Edwards = sig
   val constant_time_conditional_swap: integral -> element -> element -> element * element
 end
 
-module type S = sig
-  type integral
-  type element
-
-  val scale: integral -> element -> element
-end
-
 module Make(F: Field)(I: Integral)(E: Edwards with type integral = I.t and type element = F.t) = struct
-
-  type integral = I.t
-  type element = F.t
-
   open F
 
   let two = I.(one + one)
