@@ -26,9 +26,14 @@ module X25519: S = struct
 
     let a24 = Z.of_int 121665
 
+    let two = Z.(~$2)
+
     let constant_time_conditional_swap cond a b =
-      (* TODO: this needs to be constant time *)
-      if Z.(gt cond zero) then (b, a) else (a, b)
+      let c = Z.(rem cond two) in
+      let c' = Z.(one - c) in
+      let a' = Z.(c'*a + c*b) in
+      let b' = Z.(c'*b + c*a) in
+      a', b'
   end
 
   module C = Curve.Make(Zfield.Zp(A))(Z)(A)
