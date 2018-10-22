@@ -6,14 +6,12 @@ module type Field = sig
   val ( + ): t -> t -> t
   val ( - ): t -> t -> t
   val double: t -> t
-  val negate: t -> t
 
   val one: t
 
   val ( * ): t -> t -> t
   val ( / ): t -> t -> t
   val square: t -> t
-  val invert: t -> t
 end
 
 module type Integral = sig
@@ -51,7 +49,7 @@ module Make(F: Field)(I: Integral)(E: Edwards with type integral = I.t and type 
       | t when t < 0 ->
         let (x2, _) = cswap swap x2 x3 in
         let (z2, _) = cswap swap z2 z3 in
-        x2 * (invert z2)
+        x2 / z2
       | t ->
         let kt = bit priv t in
         let swap = I.(logxor swap kt) in

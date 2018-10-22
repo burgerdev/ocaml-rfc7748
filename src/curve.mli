@@ -6,14 +6,12 @@ module type Field = sig
   val ( + ): t -> t -> t
   val ( - ): t -> t -> t
   val double: t -> t
-  val negate: t -> t
 
   val one: t
 
   val ( * ): t -> t -> t
   val ( / ): t -> t -> t
   val square: t -> t
-  val invert: t -> t
 end
 
 module type Integral = sig
