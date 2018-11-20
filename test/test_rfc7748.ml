@@ -1,6 +1,6 @@
 open OUnit
 
-open Ed
+open Rfc7748
 
 (* Simple input-to-output tests based on RFC 7748, Section 5.2. *)
 
@@ -84,6 +84,6 @@ let x448_rep =
   |> List.map @@ fun f -> "repeated" >:: f
 
 let _ =
-  "RFC_7748_Suite" >::: [ "X25519" >::: x25519_simple @ x25519_rep
+  "Rfc7748_Suite" >::: [ "X25519" >::: x25519_simple @ x25519_rep
                         ; "X448" >::: x448_simple @ x448_rep]
   |> run_test_tt_main

@@ -1,4 +1,4 @@
-(test 
-  (name test_x25519)
-  (libraries ed ounit fmt)
+(test
+  (name test_rfc7748)
+  (libraries rfc7748 ounit)
 )

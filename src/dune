@@ -1,6 +1,6 @@
 (library
- (name ed)
- (public_name ed)
+ (name rfc7748)
+ (public_name rfc7748)
 
  (libraries cstruct zarith)
 )
