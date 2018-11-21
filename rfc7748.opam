@@ -4,7 +4,7 @@ maintainer: ["Markus Rudy <webmaster@burgerdev.de>"]
 authors: ["Markus Rudy"]
 homepage: "https://github.com/burgerdev/ocaml-rfc7748"
 bug-reports: "https://github.com/burgerdev/ocaml-rfc7748/issues"
-dev-repo: "https://github.com/burgerdev/ocaml-rfc7748.git"
+dev-repo: "git+https://github.com/burgerdev/ocaml-rfc7748.git"
 license: "MIT"
 build: [["dune" "build" "-p" name "-j" jobs]]
 depends: [
