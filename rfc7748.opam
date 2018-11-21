@@ -16,3 +16,6 @@ depends: [
   "zarith"
   "cstruct"
 ]
+synopsis: "Edwards Curves X25519 and X448 from RFC 7748"
+description: """
+Edwards Curves X25519 and X448 from RFC 7748"""
