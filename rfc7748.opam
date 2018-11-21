@@ -1,4 +1,5 @@
 opam-version: "2.0"
+name: "rfc7748"
 version: "1.0"
 maintainer: ["Markus Rudy <webmaster@burgerdev.de>"]
 authors: ["Markus Rudy"]
@@ -12,9 +13,10 @@ build: [
 ]
 depends: [
   "ocaml"
-  "dune" {build}
   "zarith"
   "cstruct"
+  "dune" {build}
+  "ounit" {with-test}
 ]
 synopsis: "Edwards Curves X25519 and X448 from RFC 7748"
 description: """

@@ -1,4 +1,4 @@
 (test
   (name test_rfc7748)
-  (libraries rfc7748 ounit)
+  (libraries rfc7748 oUnit)
 )
