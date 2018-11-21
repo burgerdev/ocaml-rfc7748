@@ -30,3 +30,6 @@ let hex_of_cstruct cs =
   Bytes.unsafe_to_string dst
 
 let cstruct_of_hex = Cstruct.of_hex
+
+let z_of_hex hex = cstruct_of_hex hex |> z_of_cstruct
+let hex_of_z n z = cstruct_of_z n z |> hex_of_cstruct

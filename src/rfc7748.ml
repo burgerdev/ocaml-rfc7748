@@ -50,26 +50,19 @@ module X25519: S = struct
       |> Z.logor set_that
 
   let public_key_of_string: string -> public_key = fun s ->
-    let p = Serde.cstruct_of_hex s
-            |> Serde.z_of_cstruct in
+    let p = Serde.z_of_hex s in
     let high = Z.(logand p (~$128 lsl 248)) in
     Public_key Z.(p - high)
 
   let string_of_public_key: public_key -> string = function Public_key pk ->
-    pk
-    |> Serde.cstruct_of_z 32
-    |> Serde.hex_of_cstruct
+    Serde.hex_of_z 32 pk
 
   let private_key_of_string: string -> private_key = fun s ->
-    let z = Serde.cstruct_of_hex s
-            |> Serde.z_of_cstruct
-            |> sanitize_scalar
-    in Private_key z
+    let z = Serde.z_of_hex s |> sanitize_scalar in
+    Private_key z
 
   let string_of_private_key: private_key -> string = function Private_key pk ->
-    pk
-    |> Serde.cstruct_of_z 32
-    |> Serde.hex_of_cstruct
+    Serde.hex_of_z 32 pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
@@ -115,25 +108,18 @@ module X448 = struct
       |> Z.logor set_that
 
   let public_key_of_string: string -> public_key = fun s ->
-    let p = Serde.cstruct_of_hex s
-            |> Serde.z_of_cstruct in
+    let p = Serde.z_of_hex s in
     Public_key p
 
   let string_of_public_key: public_key -> string = function Public_key pk ->
-    pk
-    |> Serde.cstruct_of_z 56
-    |> Serde.hex_of_cstruct
+    Serde.hex_of_z 56 pk
 
   let private_key_of_string: string -> private_key = fun s ->
-    let z = Serde.cstruct_of_hex s
-            |> Serde.z_of_cstruct
-            |> sanitize_scalar
-    in Private_key z
+    let z = Serde.z_of_hex s |> sanitize_scalar in
+    Private_key z
 
   let string_of_private_key: private_key -> string = function Private_key pk ->
-    pk
-    |> Serde.cstruct_of_z 56
-    |> Serde.hex_of_cstruct
+    Serde.hex_of_z 56 pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
