@@ -11,9 +11,9 @@ jobs:
     - checkout
     - run:
         name: "opam-install"
-        command: opam install .
+        command: opam install --with-test .
 workflows:
   version: 2
-  build_and_deploy:
+  push_validation:
     jobs:
       - build
