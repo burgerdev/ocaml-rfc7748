@@ -1,17 +1,13 @@
-let z_of_cstruct cs =
-  let iter = Cstruct.iter (fun _ -> Some 1) (fun cs -> Cstruct.get_uint8 cs 0) cs in
 
-  let rec aux acc shift = match iter () with
-    | None -> acc
-    | Some b ->
-      let acc = Z.(acc + (~$b lsl shift)) in
-      let shift = shift + 8 in
-      aux acc shift
-  in aux Z.zero 0
-
-let cstruct_of_hex = Cstruct.of_hex
-
-let z_of_hex hex = cstruct_of_hex hex |> z_of_cstruct
+let z_of_hex hex =
+  let n = String.length hex / 2 in
+  let buf = Bytes.create n in
+  let ic = Scanf.Scanning.from_string hex in
+  for i = 0 to (n - 1) do
+    Bytes.set buf i @@ Scanf.bscanf ic "%02x" char_of_int
+  done;
+  Bytes.unsafe_to_string buf
+  |> Z.of_bits
 
 let hex_of_z n z =
   let num_hex = 2 * n in
