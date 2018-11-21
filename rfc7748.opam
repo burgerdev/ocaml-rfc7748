@@ -6,10 +6,16 @@ homepage: "https://github.com/burgerdev/ocaml-rfc7748"
 bug-reports: "https://github.com/burgerdev/ocaml-rfc7748/issues"
 dev-repo: "git+https://github.com/burgerdev/ocaml-rfc7748.git"
 license: "MIT"
-build: [["dune" "build" "-p" name "-j" jobs]]
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+  ["dune" "runtest" "-p" name "-j" jobs] {with-test}
+]
 depends: [
   "ocaml"
   "dune" {build}
   "zarith"
   "cstruct"
 ]
+synopsis: "Edwards Curves X25519 and X448 from RFC 7748"
+description: """
+Edwards Curves X25519 and X448 from RFC 7748"""
