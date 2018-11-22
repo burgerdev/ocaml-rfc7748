@@ -14,7 +14,6 @@ build: [
 depends: [
   "ocaml"
   "zarith"
-  "cstruct"
   "dune" {build}
   "ounit" {with-test}
 ]
