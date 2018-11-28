@@ -58,11 +58,11 @@ let x25519_rep =
   ; { start="0900000000000000000000000000000000000000000000000000000000000000"
     ; iter=1000
     ; exp="684cf59ba83309552800ef566f2f4d3c1c3887c49360e3875f2eb94d99532c51"}
-  (* implementation is too slow to run this within a reasonable time frame
-  ; { start="0900000000000000000000000000000000000000000000000000000000000000"
-    ; iter=1000000
-    ; exp="7c3911e0ab2586fd864497297e575e6f3bc601c0883c30df5f4dd2d24f665424"}
-  *)
+    (* implementation is too slow to run this within a reasonable time frame
+       ; { start="0900000000000000000000000000000000000000000000000000000000000000"
+       ; iter=1000000
+       ; exp="7c3911e0ab2586fd864497297e575e6f3bc601c0883c30df5f4dd2d24f665424"}
+    *)
   ]
   |> List.map @@ black_box_test (module X25519)
   |> List.map @@ fun f -> "repeated" >:: f
@@ -74,16 +74,42 @@ let x448_rep =
   ; { start="0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
     ; iter=1000
     ; exp="aa3b4749d55b9daf1e5b00288826c467274ce3ebbdd5c17b975e09d4af6c67cf10d087202db88286e2b79fceea3ec353ef54faa26e219f38"}
-  (* implementation is too slow to run this within a reasonable time frame
-  ; { start="0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
-    ; iter=1000000
-     ; exp="077f453681caca3693198420bbe515cae0002472519b3e67661a7e89cab94695c8f4bcd66e61b9b9c946da8d524de3d69bd9d9d66b997e37"}
-  *)
+    (* implementation is too slow to run this within a reasonable time frame
+       ; { start="0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+       ; iter=1000000
+       ; exp="077f453681caca3693198420bbe515cae0002472519b3e67661a7e89cab94695c8f4bcd66e61b9b9c946da8d524de3d69bd9d9d66b997e37"}
+    *)
   ]
   |> List.map @@ black_box_test (module X448)
   |> List.map @@ fun f -> "repeated" >:: f
 
+(* Use for Diffie-Hellman based on RFC 7748, Section 6.1f *)
+
+type case3 = {a: string; b: string; exp: string}
+
+let diffie_hellman_test: (module S) -> case3 -> test_fun = fun m {a; b; exp} _ ->
+  let module M = (val m) in
+  let dh priv_a priv_b =
+    let pub_b = M.(private_key_of_string priv_b |> public_key_of_private_key) in
+    M.(scale (private_key_of_string priv_a) pub_b |> string_of_public_key)
+  in
+  assert_equal (dh a b) (dh b a);
+  assert_equal exp (dh a b)
+
+let x25519_dh =
+  "x25519_dh" >:: diffie_hellman_test (module X25519)
+    { a="77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a"
+    ; b="5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb"
+    ; exp="4a5d9d5ba4ce2de1728e3bf480350f25e07e21c947d19e3376f09b3c1e161742"}
+
+let x448_dh =
+  "x448_dh" >:: diffie_hellman_test (module X448)
+    { a="9a8f4925d1519f5775cf46b04b5800d4ee9ee8bae8bc5565d498c28dd9c9baf574a9419744897391006382a6f127ab1d9ac2d8c0a598726b"
+    ; b="1c306a7ac2a0e2e0990b294470cba339e6453772b075811d8fad0d1d6927c120bb5ee8972b0d3e21374c9c921b09d1b0366f10b65173992d"
+    ; exp="07fff4181ac6cc95ec1c16a94a0f74d12da232ce40a77552281d282bb60c0b56fd2464c335543936521c24403085d59a449a5037514a879d"}
+
+
 let _ =
-  "Rfc7748_Suite" >::: [ "X25519" >::: x25519_simple @ x25519_rep
-                        ; "X448" >::: x448_simple @ x448_rep]
+  "Rfc7748_Suite" >::: [ "X25519" >::: x25519_dh :: x25519_simple @ x25519_rep
+                       ; "X448" >::: x448_dh :: x448_simple @ x448_rep ]
   |> run_test_tt_main
