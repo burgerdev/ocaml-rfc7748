@@ -6,7 +6,7 @@ open Rfc7748
 
 type case = {priv: string; pub: string; exp: string}
 
-let black_box_test: (module S) -> case -> test_fun = fun m {priv; pub; exp} _ ->
+let black_box_test: (module DH) -> case -> test_fun = fun m {priv; pub; exp} _ ->
   let module M = (val m) in
   let priv = M.private_key_of_string priv in
   let pub = M.public_key_of_string pub in
@@ -38,7 +38,7 @@ let x448_simple =
 
 type case2 = {start: string; iter: int; exp: string}
 
-let black_box_test: (module S) -> case2 -> test_fun = fun m {start; iter; exp} _ ->
+let black_box_test: (module DH) -> case2 -> test_fun = fun m {start; iter; exp} _ ->
   let module M = (val m) in
   let rec apply k u = function
     | 0 -> k
@@ -87,7 +87,7 @@ let x448_rep =
 
 type case3 = {a: string; b: string; exp: string}
 
-let diffie_hellman_test: (module S) -> case3 -> test_fun = fun m {a; b; exp} _ ->
+let diffie_hellman_test: (module DH) -> case3 -> test_fun = fun m {a; b; exp} _ ->
   let module M = (val m) in
   let dh priv_a priv_b =
     let pub_b = M.(private_key_of_string priv_b |> public_key_of_private_key) in

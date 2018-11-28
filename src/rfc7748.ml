@@ -1,4 +1,4 @@
-module type S = sig
+module type DH = sig
   type private_key
   type public_key
 
@@ -8,15 +8,15 @@ module type S = sig
 
   val public_key_of_string: string -> public_key
   val private_key_of_string: string -> private_key
-  val public_key_of_private_key: private_key -> public_key
 
   val string_of_public_key: public_key -> string
   val string_of_private_key: private_key -> string
 
   val scale: private_key -> public_key -> public_key
+  val public_key_of_private_key: private_key -> public_key
 end
 
-module X25519: S = struct
+module X25519: DH = struct
   type private_key = Private_key of Z.t
   type public_key = Public_key of Z.t
 
@@ -83,7 +83,7 @@ let x25519 ~priv ~pub =
     |> string_of_public_key
   )
 
-module X448: S = struct
+module X448: DH = struct
   type private_key = Private_key of Z.t
   type public_key = Public_key of Z.t
 
