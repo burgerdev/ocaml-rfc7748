@@ -3,6 +3,10 @@ module type S = sig
   type private_key
   type public_key
 
+  val key_size: int
+
+  val base: public_key
+
   val public_key_of_string: string -> public_key
   val private_key_of_string: string -> private_key
 
@@ -17,3 +21,6 @@ end
 module X25519: S
 
 module X448: S
+
+val x25519: priv:string -> pub:string -> string
+val x448: priv:string -> pub:string -> string

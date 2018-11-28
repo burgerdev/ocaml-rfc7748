@@ -2,6 +2,10 @@ module type S = sig
   type private_key
   type public_key
 
+  val key_size: int
+
+  val base: public_key
+
   val public_key_of_string: string -> public_key
   val private_key_of_string: string -> private_key
   val public_key_of_private_key: private_key -> public_key
@@ -15,6 +19,8 @@ end
 module X25519: S = struct
   type private_key = Private_key of Z.t
   type public_key = Public_key of Z.t
+
+  let key_size = 32
 
   module A = struct
     type element = Z.t
@@ -55,24 +61,33 @@ module X25519: S = struct
     Public_key Z.(p - high)
 
   let string_of_public_key: public_key -> string = function Public_key pk ->
-    Serde.hex_of_z 32 pk
+    Serde.hex_of_z key_size pk
 
   let private_key_of_string: string -> private_key = fun s ->
     let z = Serde.z_of_hex s |> sanitize_scalar in
     Private_key z
 
   let string_of_private_key: private_key -> string = function Private_key pk ->
-    Serde.hex_of_z 32 pk
+    Serde.hex_of_z key_size pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
-  let public_key_of_private_key priv =
-    scale priv (public_key_of_string "0900000000000000000000000000000000000000000000000000000000000000")
+  let base = Public_key (Z.of_int 9)
+
+  let public_key_of_private_key priv = scale priv base
 end
 
-module X448 = struct
+let x25519 ~priv ~pub =
+  X25519.(
+    scale (private_key_of_string priv) (public_key_of_string pub)
+    |> string_of_public_key
+  )
+
+module X448: S = struct
   type private_key = Private_key of Z.t
   type public_key = Public_key of Z.t
+
+  let key_size = 56
 
   module A = struct
     type element = Z.t
@@ -112,17 +127,24 @@ module X448 = struct
     Public_key p
 
   let string_of_public_key: public_key -> string = function Public_key pk ->
-    Serde.hex_of_z 56 pk
+    Serde.hex_of_z key_size pk
 
   let private_key_of_string: string -> private_key = fun s ->
     let z = Serde.z_of_hex s |> sanitize_scalar in
     Private_key z
 
   let string_of_private_key: private_key -> string = function Private_key pk ->
-    Serde.hex_of_z 56 pk
+    Serde.hex_of_z key_size pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
-  let public_key_of_private_key priv =
-    scale priv (public_key_of_string "0500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")
+  let base = Public_key (Z.of_int 5)
+
+  let public_key_of_private_key priv = scale priv base
 end
+
+let x448 ~priv ~pub =
+  X448.(
+    scale (private_key_of_string priv) (public_key_of_string pub)
+    |> string_of_public_key
+  )
