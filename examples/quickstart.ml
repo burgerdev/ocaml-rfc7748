@@ -10,9 +10,7 @@ let _ = Random.init 7748
 let random_bytes_hex n =
   List.init n (fun _ -> Random.int 256)
   |> List.map @@ Format.sprintf "%02x"
-  |> List.to_seq
-  |> Seq.flat_map String.to_seq
-  |> String.of_seq
+  |> String.concat ""
 
 (* The base point is used to derive public keys from private keys. *)
 let base = X25519.(base |> string_of_public_key)
