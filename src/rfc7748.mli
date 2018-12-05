@@ -1,8 +1,36 @@
+(** This library provides the two Diffie-Hellman-like functions defined in the
+    eponymous RFC, [x25519] and [x448]. *)
 
-(** Diffie-Hellman
+(** {2 Summary} *)
 
-    This is the module type for the Diffie-Hellman functions defined in
-    RFC 7748. *)
+(** X25519 and X448 are instances of a special subset of elliptic curves, the
+    so-called {e Edwards curves}, for which point addition has a closed form.
+    This eliminates a whole class of problems that arise in other elliptic curve
+    implementations, where addition formulas depend on the arguments (e.g.
+    whether a point is added to itself). In addition, these curves are also
+    {e designed} to be safe to implement and use: the addition formula is by
+    construction resistant to timing attacks, neither public keys nor private
+    keys need to be validated and the string-based interface is very portable. *)
+
+(** {2 Quick Start}
+
+    You can use {!Rfc7748.x25519} and {!Rfc7748.x448} as described in the example
+    program in the source tree. *)
+
+(** {2 API}
+
+    Below is the public API for this library. It is divided into
+    - a module type {!Rfc7748.DH} for scalar multiplication on Edwards curves
+      (the elliptic curve analogon of discrete exponentiation, as used in the
+      classical Diffie-Hellman key exchange)
+    - the curves {!Rfc7748.X25519} and {!Rfc7748.X448} and
+    - the functions {!Rfc7748.x25519} and {!Rfc7748.x448} described in RFC 7748.
+*)
+
+
+(** Signature of the modules implementing the Diffie-Hellman functions for
+    RFC 7748. 
+*)
 module type DH = sig
 
   (** {2 Types} *)
@@ -63,7 +91,7 @@ module type DH = sig
   (** [public_key_of_private_key priv] is equal to [scale priv base] *)
 end
 
-(** X25519
+(** X25519 (based on Curve25519 by Daniel J. Bernstein)
 
     This curve is considered to have a strength equivalent to 128 bit in a
     symmetric cipher. It was proposed in
@@ -71,7 +99,7 @@ end
     Bernstein. *)
 module X25519: DH
 
-(** X448
+(** X448 (based on Ed448-Goldilocks by Mike Hamburg)
 
     This curve is considered to have a strength equivalent to 224 bit in a
     symmetric cipher. It was proposed in
