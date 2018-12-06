@@ -15,7 +15,7 @@ let hex_of_z n z =
   let src = Z.format ("%0" ^ string_of_int num_hex ^ "x") z in
   let dst = Bytes.create num_hex in
   for i = 0 to upper_bound do
-    BytesLabels.blit_string ~src ~src_pos:(2*i) ~dst ~dst_pos:(2*(upper_bound-i)) ~len:2
+    Bytes.blit_string src (2*i) dst (2*(upper_bound-i)) 2
   done;
   (* This is ok because we created the string and will forget it after returning. *)
   Bytes.unsafe_to_string dst
