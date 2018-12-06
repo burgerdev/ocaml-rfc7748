@@ -5,10 +5,15 @@ open Rfc7748
 (* Make this example deterministic by fixing the random seed. *)
 let _ = Random.init 7748
 
+(* Create a list of [n] random bytes (could be using [List.init] in OCaml 4.06+). *)
+let rec random_bytes = function
+  | n when n <= 0 -> []
+  | n -> Random.int 256 :: random_bytes (n - 1)
+
 (* This function generates [n] random bytes and encodes them in a hexadecimal
    string. *)
 let random_bytes_hex n =
-  List.init n (fun _ -> Random.int 256)
+  random_bytes n
   |> List.map @@ Format.sprintf "%02x"
   |> String.concat ""
 
