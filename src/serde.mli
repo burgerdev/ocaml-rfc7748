@@ -1,4 +1,7 @@
 
+val bytes_of_hex: string -> Bytes.t
+val hex_of_bytes: Bytes.t -> string
+
 val z_of_hex: string -> Z.t
 val hex_of_z: int -> Z.t -> string
 

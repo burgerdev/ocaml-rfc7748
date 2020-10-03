@@ -12,6 +12,15 @@ type case = {priv: string; pub: string; exp: string}
 let to_bytes hex =
   Hex.to_string (`Hex hex) |> Bytes.of_string
 
+(* We want to execute the slow tests only when running on CI, which is determined by the presence of the [CI] env var. *)
+let all_tests () =
+  try
+    ignore @@ Sys.getenv "CI";
+    true
+  with
+  | Not_found -> false
+
+
 let black_box_test: (module DH) -> case -> test_fun = fun m {priv; pub; exp} _ ->
   let module M = (val m) in
   let out = M.scale (M.private_key_of_string priv) (M.public_key_of_string pub)
@@ -63,18 +72,25 @@ let black_box_test: (module DH) -> case2 -> test_fun = fun m {start; iter; exp} 
   assert_equal exp out
 
 let x25519_rep =
-  [ { start="0900000000000000000000000000000000000000000000000000000000000000"
-    ; iter=1
-    ; exp="422c8e7a6227d7bca1350b3e2bb7279f7897b87bb6854b783c60e80311ae3079"}
-  ; { start="0900000000000000000000000000000000000000000000000000000000000000"
-    ; iter=1000
-    ; exp="684cf59ba83309552800ef566f2f4d3c1c3887c49360e3875f2eb94d99532c51"}
-    (* implementation is too slow to run this within a reasonable time frame
-       ; { start="0900000000000000000000000000000000000000000000000000000000000000"
-       ; iter=1000000
-       ; exp="7c3911e0ab2586fd864497297e575e6f3bc601c0883c30df5f4dd2d24f665424"}
-    *)
-  ]
+  let cases =
+    [ { start="0900000000000000000000000000000000000000000000000000000000000000"
+      ; iter=1
+      ; exp="422c8e7a6227d7bca1350b3e2bb7279f7897b87bb6854b783c60e80311ae3079"}
+    ; { start="0900000000000000000000000000000000000000000000000000000000000000"
+      ; iter=1000
+      ; exp="684cf59ba83309552800ef566f2f4d3c1c3887c49360e3875f2eb94d99532c51"}
+    ]
+  in
+  let cases =
+    if all_tests () then
+      { start="0900000000000000000000000000000000000000000000000000000000000000"
+      ; iter=1000000
+      ; exp="7c3911e0ab2586fd864497297e575e6f3bc601c0883c30df5f4dd2d24f665424"}
+      :: cases
+    else
+      cases
+  in
+  cases
   |> List.map @@ black_box_test (module X25519)
   |> List.map @@ fun f -> "repeated" >:: f
 
