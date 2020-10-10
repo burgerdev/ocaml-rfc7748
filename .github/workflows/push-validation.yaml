@@ -1,0 +1,32 @@
+name: "Push Validation"
+
+on:
+  push:
+    branches:
+    - "master"
+  pull_request:
+    branches:
+    - "master"
+
+jobs:
+  build-and-test:
+    runs-on: "ubuntu-18.04"
+    container:
+      image: "ocaml/opam2:alpine-3.8-ocaml-4.03"
+      options: "--user root"
+    steps:
+    - uses: "actions/checkout@v2"
+    - name: "Prepare container environment"
+      run: |
+        apk add --no-cache m4 perl gmp-dev git
+        chown -R opam .
+    - name: "Check formatting"
+      shell: "sudo -u opam sh -e {0}"
+      run: |
+        opam install -y ocp-indent
+        eval $(opam env)
+        find src test -name "*.ml" -or -name "*.mli" -type f | xargs ocp-indent -i
+        git diff --exit-code
+    - name: "Build and test."
+      shell: "sudo -u opam sh -e {0}"
+      run: "opam install -y --with-test ."
