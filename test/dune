@@ -1,6 +1,6 @@
 (test
   (name test_rfc7748)
-  (libraries rfc7748 oUnit)
+  (libraries rfc7748 oUnit hex)
   (modules test_rfc7748)
 )
 (test

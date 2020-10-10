@@ -8,9 +8,13 @@ type case = {priv: string; pub: string; exp: string}
 
 let black_box_test: (module DH) -> case -> test_fun = fun m {priv; pub; exp} _ ->
   let module M = (val m) in
-  let priv = M.private_key_of_string priv in
-  let pub = M.public_key_of_string pub in
-  let out = M.scale priv pub |> M.string_of_public_key in
+  let out = M.scale (M.private_key_of_string priv) (M.public_key_of_string pub)
+            |> M.string_of_public_key
+  in
+  assert_equal exp out;
+  let priv = Hex.to_bytes (`Hex priv) |> M.private_key_of_bytes in
+  let pub = Hex.to_bytes (`Hex pub) |> M.public_key_of_bytes in
+  let `Hex out = M.scale priv pub |> M.bytes_of_public_key |> Hex.of_bytes in
   assert_equal exp out
 
 let x25519_simple =
@@ -43,12 +47,13 @@ let black_box_test: (module DH) -> case2 -> test_fun = fun m {start; iter; exp} 
   let rec apply k u = function
     | 0 -> k
     | n ->
-      let pub = M.public_key_of_string u in
-      let priv = M.private_key_of_string k in
-      apply (M.scale priv pub |> M.string_of_public_key) k (n - 1)
+      let pub = M.public_key_of_bytes u in
+      let priv = M.private_key_of_bytes k in
+      apply (M.scale priv pub |> M.bytes_of_public_key) k (n - 1)
   in
-
+  let start = Hex.to_bytes (`Hex start) in
   let out = apply start start iter in
+  let `Hex out = Hex.of_bytes out in
   assert_equal exp out
 
 let x25519_rep =

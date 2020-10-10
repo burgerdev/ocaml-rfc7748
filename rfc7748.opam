@@ -16,6 +16,7 @@ depends: [
   "zarith" { >= "1.5" }
   "dune" { build & >= "1.2.1" }
   "ounit" { with-test & >= "2.0.5" }
+  "hex" { with-test & >= "1.3.0" }
 ]
 synopsis: "Edwards Curves X25519 and X448 from RFC 7748"
 description: """
