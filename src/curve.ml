@@ -72,7 +72,7 @@ module Make(F: Field)(I: Integral)(E: Edwards with type integral = I.t and type 
         let x2 = aa * bb in
         let z2 = e * (aa + E.a24 * e) in
 
-        aux x1 x2 x3 z2 z3 swap Pervasives.(t - 1)
+        aux x1 x2 x3 z2 z3 swap (pred t)
     in
 
     let x1 = pub in
@@ -81,5 +81,5 @@ module Make(F: Field)(I: Integral)(E: Edwards with type integral = I.t and type 
     let x3 = pub in
     let z3 = one in
     let swap = I.zero in
-    aux x1 x2 x3 z2 z3 swap Pervasives.(E.bits - 1)
+    aux x1 x2 x3 z2 z3 swap (pred E.bits)
 end
