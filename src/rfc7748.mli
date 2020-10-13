@@ -82,6 +82,26 @@ module type DH = sig
   val string_of_private_key: private_key -> string
   (** Convert the private key to its hex-encoded string representation. *)
 
+  val public_key_of_bytes: Bytes.t -> public_key
+  (** Create a public key from a byte array of length [key_size]. An exception
+      is raised if the array has the wrong size. Besides that, the function
+      behaves like {!public_key_of_string} after hex-decoding. The array is not
+      modified by this module, and it must not be modified externally while the
+      [public_key] object is in scope. *)
+
+  val private_key_of_bytes: Bytes.t -> private_key
+  (** Create a private key from a byte array of length [key_size]. An exception
+      is raised if the array has the wrong size. Besides that, the function
+      behaves like {!private_key_of_string} after hex-decoding. The array is not
+      modified by this module, and it must not be modified externally while the
+      [public_key] object is in scope. *)
+
+  val bytes_of_public_key: public_key -> Bytes.t
+  (** Create a byte array from the given public key. *)
+
+  val bytes_of_private_key: private_key -> Bytes.t
+  (** Create a byte array from the given private key. *)
+
   (** {2 Curve Operations} *)
 
   val scale: private_key -> public_key -> public_key

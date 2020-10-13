@@ -12,6 +12,12 @@ module type DH = sig
   val string_of_public_key: public_key -> string
   val string_of_private_key: private_key -> string
 
+  val public_key_of_bytes: Bytes.t -> public_key
+  val private_key_of_bytes: Bytes.t -> private_key
+
+  val bytes_of_public_key: public_key -> Bytes.t
+  val bytes_of_private_key: private_key -> Bytes.t
+
   val scale: private_key -> public_key -> public_key
   val public_key_of_private_key: private_key -> public_key
 end
@@ -60,15 +66,32 @@ module X25519: DH = struct
     let high = Z.(logand p (~$128 lsl 248)) in
     Public_key Z.(p - high)
 
+  let public_key_of_bytes: Bytes.t -> public_key = fun buf ->
+    assert (Bytes.length buf = key_size);
+    let p = Serde.z_of_bytes buf in
+    let high = Z.(logand p (~$128 lsl 248)) in
+    Public_key Z.(p - high)
+
   let string_of_public_key: public_key -> string = function Public_key pk ->
     Serde.hex_of_z key_size pk
+
+  let bytes_of_public_key: public_key -> Bytes.t = function Public_key pk ->
+    Serde.bytes_of_z key_size pk
 
   let private_key_of_string: string -> private_key = fun s ->
     let z = Serde.z_of_hex s |> sanitize_scalar in
     Private_key z
 
+  let private_key_of_bytes: Bytes.t -> private_key = fun buf ->
+    assert (Bytes.length buf = key_size);
+    let z = Serde.z_of_bytes buf |> sanitize_scalar in
+    Private_key z
+
   let string_of_private_key: private_key -> string = function Private_key pk ->
     Serde.hex_of_z key_size pk
+
+  let bytes_of_private_key: private_key -> Bytes.t = function Private_key pk ->
+    Serde.bytes_of_z key_size pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
@@ -126,15 +149,29 @@ module X448: DH = struct
     let p = Serde.z_of_hex s in
     Public_key p
 
+  let public_key_of_bytes buf =
+    let p = Serde.z_of_bytes buf in
+    Public_key p
+
   let string_of_public_key: public_key -> string = function Public_key pk ->
     Serde.hex_of_z key_size pk
+
+  let bytes_of_public_key = function Public_key pk ->
+    Serde.bytes_of_z key_size pk
 
   let private_key_of_string: string -> private_key = fun s ->
     let z = Serde.z_of_hex s |> sanitize_scalar in
     Private_key z
 
+  let private_key_of_bytes buf =
+    let z = Serde.z_of_bytes buf |> sanitize_scalar in
+    Private_key z
+
   let string_of_private_key: private_key -> string = function Private_key pk ->
     Serde.hex_of_z key_size pk
+
+  let bytes_of_private_key = function Private_key pk ->
+    Serde.bytes_of_z key_size pk
 
   let scale (Private_key priv) (Public_key pub) = Public_key (C.scale priv pub)
 
