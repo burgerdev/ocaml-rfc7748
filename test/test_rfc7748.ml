@@ -6,15 +6,21 @@ open Rfc7748
 
 type case = {priv: string; pub: string; exp: string}
 
+(* It would be nice to use Hex.to_bytes, but this is only supported after
+ * Hex >= 1.3.0. Alternatively, we could [opam update] in the integration
+ * tests, but implementing it here seems easy enough. *)
+let to_bytes hex =
+  Hex.to_string (`Hex hex) |> Bytes.of_string
+
 let black_box_test: (module DH) -> case -> test_fun = fun m {priv; pub; exp} _ ->
   let module M = (val m) in
   let out = M.scale (M.private_key_of_string priv) (M.public_key_of_string pub)
             |> M.string_of_public_key
   in
   assert_equal exp out;
-  let priv = Hex.to_bytes (`Hex priv) |> M.private_key_of_bytes in
-  let pub = Hex.to_bytes (`Hex pub) |> M.public_key_of_bytes in
-  let `Hex out = M.scale priv pub |> M.bytes_of_public_key |> Hex.of_bytes in
+  let priv = to_bytes priv |> M.private_key_of_bytes in
+  let pub = to_bytes pub |> M.public_key_of_bytes in
+  let `Hex out = M.scale priv pub |> M.bytes_of_public_key |> Bytes.to_string |> Hex.of_string in
   assert_equal exp out
 
 let x25519_simple =
@@ -51,9 +57,9 @@ let black_box_test: (module DH) -> case2 -> test_fun = fun m {start; iter; exp} 
       let priv = M.private_key_of_bytes k in
       apply (M.scale priv pub |> M.bytes_of_public_key) k (n - 1)
   in
-  let start = Hex.to_bytes (`Hex start) in
+  let start = to_bytes start in
   let out = apply start start iter in
-  let `Hex out = Hex.of_bytes out in
+  let `Hex out = Bytes.to_string out |> Hex.of_string in
   assert_equal exp out
 
 let x25519_rep =
