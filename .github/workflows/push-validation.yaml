@@ -20,6 +20,9 @@ jobs:
       run: |
         apk add --no-cache m4 perl gmp-dev git
         chown -R opam .
+    - name: "Build and test."
+      shell: "sudo -u opam sh -e {0}"
+      run: "opam install -y --with-test ."
     - name: "Check formatting"
       shell: "sudo -u opam sh -e {0}"
       run: |
@@ -27,6 +30,3 @@ jobs:
         eval $(opam env)
         find src test -name "*.ml" -or -name "*.mli" -type f | xargs ocp-indent -i
         git diff --exit-code
-    - name: "Build and test."
-      shell: "sudo -u opam sh -e {0}"
-      run: "opam install -y --with-test ."
