@@ -11,8 +11,13 @@ on:
 jobs:
   build-and-test:
     runs-on: "ubuntu-18.04"
+    strategy:
+      matrix:
+        container:
+        - "ocaml/opam2:alpine-3.8-ocaml-4.03"
+        - "ocaml/opam2:alpine-3.12-ocaml-4.11"
     container:
-      image: "ocaml/opam2:alpine-3.8-ocaml-4.03"
+      image: "${{ matrix.container }}"
       options: "--user root"
     steps:
     - uses: "actions/checkout@v2"
