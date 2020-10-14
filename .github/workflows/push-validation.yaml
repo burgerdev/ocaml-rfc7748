@@ -35,3 +35,15 @@ jobs:
     - name: "Build and test."
       shell: "sudo -u opam sh -e {0}"
       run: "opam install -y --with-test ."
+    - name: "Build documentation"
+      shell: "sudo -u opam sh -e {0}"
+      run: |
+        opam install -y odoc
+        eval $(opam env)
+        dune build @doc
+    - name: "Push documentation"
+      if: ${{ github.event_name == 'push' && matrix.container == 'ocaml/opam2:alpine-3.12-ocaml-4.11' }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./_build/default/_doc/_html/rfc7748
