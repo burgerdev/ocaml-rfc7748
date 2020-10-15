@@ -1,0 +1,4 @@
+(executable
+  (name curveops)
+  (libraries rfc7748 benchmark)
+)

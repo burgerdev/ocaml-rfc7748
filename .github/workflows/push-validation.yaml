@@ -35,6 +35,12 @@ jobs:
     - name: "Build and test."
       shell: "sudo -u opam sh -e {0}"
       run: "opam install -y --with-test ."
+    - name: "Run benchmark"
+      shell: "sudo -u opam sh -e {0}"
+      run: |
+        opam install -y benchmark
+        eval $(opam env)
+        dune exec benchmark/curveops.exe
     - name: "Build documentation"
       shell: "sudo -u opam sh -e {0}"
       run: |
