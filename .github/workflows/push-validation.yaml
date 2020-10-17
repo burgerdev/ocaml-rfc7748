@@ -11,8 +11,13 @@ on:
 jobs:
   build-and-test:
     runs-on: "ubuntu-18.04"
+    strategy:
+      matrix:
+        container:
+        - "ocaml/opam2:alpine-3.8-ocaml-4.03"
+        - "ocaml/opam2:alpine-3.12-ocaml-4.11"
     container:
-      image: "ocaml/opam2:alpine-3.8-ocaml-4.03"
+      image: "${{ matrix.container }}"
       options: "--user root"
     steps:
     - uses: "actions/checkout@v2"
@@ -30,3 +35,21 @@ jobs:
         eval $(opam env)
         find src test -name "*.ml" -or -name "*.mli" -type f | xargs ocp-indent -i
         git diff --exit-code
+    - name: "Run benchmark"
+      shell: "sudo -u opam sh -e {0}"
+      run: |
+        opam install -y benchmark
+        eval $(opam env)
+        dune exec benchmark/curveops.exe
+    - name: "Build documentation"
+      shell: "sudo -u opam sh -e {0}"
+      run: |
+        opam install -y odoc
+        eval $(opam env)
+        dune build @doc
+    - name: "Push documentation"
+      if: ${{ github.event_name == 'push' && matrix.container == 'ocaml/opam2:alpine-3.12-ocaml-4.11' }}
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./_build/default/_doc/_html
