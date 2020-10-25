@@ -25,6 +25,10 @@ jobs:
       run: |
         apk add --no-cache m4 perl gmp-dev git
         chown -R opam .
+        cd /home/opam/opam-repository
+        sudo -u opam git fetch
+        sudo -u opam git checkout 6ef290f5681b7ece5d9c085bcf0c55268c118292
+        sudo -u opam opam update
     - name: "Build and test."
       shell: "sudo -u opam sh -e {0}"
       run: "opam install -y --with-test ."
