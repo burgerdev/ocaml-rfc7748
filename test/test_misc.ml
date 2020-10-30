@@ -20,7 +20,7 @@ let module_suite: (module DH) -> test list = fun m ->
   ; "base_point" >:: check_base_point]
 
 let x25519_dh _ =
-  let base = "09" in
+  let base = X25519.(string_of_public_key base) in
   let alice = "77076d0a7318a57d3c16c17251b26645df4c2f87ebc0992ab177fba51db92c2a" in
   let bob = "5dab087e624a8a4b79e17f8b83800ee66f3bb1292618b6fd1c2f8b27ff88e0eb" in
   let shared_secret_alice = x25519 ~priv:alice ~pub:(x25519 ~priv:bob ~pub:base) in
@@ -42,7 +42,7 @@ let x448_dh _ =
     shared_secret_alice
 
 let _ =
-  "Library_Suite" >::: [ "x25519" >::: module_suite (module X25519)
+  "MiscXYZ_Suite" >::: [ "x25519" >::: module_suite (module X25519)
                        ; "x25519_dh" >:: x25519_dh
                        ; "x448" >::: module_suite (module X448)
                        ; "x448_dh" >:: x448_dh
